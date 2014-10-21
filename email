@@ -1,0 +1,37 @@
+<?php
+
+// This script is used in combination with a cronjob to send this email once a day
+// This script triggers a new email everytime it is accessed
+
+$birth = date("YYYY-MM-DD"); // replace YYYY-MM-DD with your birthday
+$now = date("Y/m/d");
+$death = date("YYYY-MM-DD"); // replace YYYY-MM-DD with your estimated death date
+
+function remaining($start, $end) {
+  $start_ts = strtotime($start);
+  $end_ts = strtotime($end);
+  $diff = $end_ts - $start_ts;
+  return round($diff / 86400);
+}
+
+$timeleft = remaining($now, $death).'';
+
+function given($start, $end) {
+  $start_ts = strtotime($start);
+  $end_ts = strtotime($end);
+  $diff = $end_ts - $start_ts;
+  return round($diff / 86400);
+}
+
+$timegiven = remaining($birth, $death).'';
+$timeused = $timegiven - $timeleft;
+$timeleftper = $timeleft/$timegiven;
+$lastdigit = substr($timeleft, -1);
+
+$to = 'email@mail.com'; // add your email
+$subject = 'You have '.$timeleft.' days left to make things happen.';
+$message = "Days Given: ".$timegiven."\r\nDays Used: ".$timeused."\r\nDays Left: ".$timeleft;
+$mail_sent = @mail( $to, $subject, $message, $headers );
+echo $mail_sent ? "Mail sent" : "Mail failed";
+
+?>
